@@ -13,6 +13,7 @@ contract SimpleSwap {
      *  from USDC/WETH pool.
      *
      */
+    uint256 constant amountToSwap = 0.1 ether;
     function performSwap(address pool, address weth, address usdc) public {
         /**
          *     swap(uint256 amount0Out, uint256 amount1Out, address to, bytes calldata data);
@@ -24,5 +25,7 @@ contract SimpleSwap {
          */
 
         // your code start here
+        IERC20(weth).transfer(pool, amountToSwap);
+        IUniswapV2Pair(pool).swap(1 * 10 ** 6, 0, address(this), "");
     }
 }

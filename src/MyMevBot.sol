@@ -19,6 +19,7 @@ contract MyMevBot {
     address public immutable usdt;
     address public immutable router;
     bool public flashLoaned;
+    uint256 constant flashLoanAmount = 5000 * 1e6;
 
     constructor(address _flashLenderPool, address _weth, address _usdc, address _usdt, address _router) {
         flashLenderPool = _flashLenderPool;
@@ -30,12 +31,28 @@ contract MyMevBot {
 
     function performArbitrage() public {
         // your code here
+        IUniswapV3Pool(flashLenderPool).flash(address(this), flashLoanAmount, 0, "");
     }
 
     function uniswapV3FlashCallback(uint256 _fee0, uint256, bytes calldata data) external {
         callMeCallMe();
 
         // your code start here
+        uint256 deadline = block.timestamp + 1 minutes;
+        address[] memory path = new address[](4);
+        path[0] = usdc;
+        path[1] = weth;
+        path[2] = usdt;
+        path[3] = usdc;
+        IERC20(usdc).approve(router, flashLoanAmount);
+        IUniswapV2Router(router).swapExactTokensForTokens(
+            flashLoanAmount,
+            flashLoanAmount,
+            path,
+            address(this),
+            deadline
+        );
+        IERC20(usdc).transfer(flashLenderPool, flashLoanAmount + _fee0);
     }
 
     function callMeCallMe() private {

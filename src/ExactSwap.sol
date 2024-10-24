@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import "./interfaces/IUniswapV2Pair.sol";
 import "./interfaces/IERC20.sol";
+import {console2} from "forge-std/console2.sol";
 
 contract ExactSwap {
     /**
@@ -24,5 +25,14 @@ contract ExactSwap {
          */
 
         // your code start here
+        (uint256 usdcReserve, uint256 wethReserve, ) = IUniswapV2Pair(pool).getReserves();
+        uint256 usdcAmount = 1337 * 10 ** 6;
+        uint256 numerator = wethReserve * usdcAmount * 1000;
+        uint256 denominator = (usdcReserve - usdcAmount) * 997;
+        uint256 exactWethAmount = (numerator / denominator) + 1;
+
+        console2.log("exactWethAmount: ", exactWethAmount);
+        IERC20(weth).transfer(pool, exactWethAmount);
+        IUniswapV2Pair(pool).swap(1337 * 10 ** 6, 0, address(this), "");
     }
 }

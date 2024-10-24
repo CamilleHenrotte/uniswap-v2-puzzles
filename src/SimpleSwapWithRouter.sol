@@ -19,6 +19,7 @@ contract SimpleSwapWithRouter {
 
     function performSwapWithRouter(address[] calldata path, uint256 deadline) public {
         // your code start here
+        IUniswapV2Router(router).swapExactETHForTokens{value: 1 ether}(1 * 10 ** 6, path, address(this), deadline);
     }
 
     receive() external payable {}
@@ -31,8 +32,10 @@ interface IUniswapV2Router {
      *     to: recipient address to receive the liquidity tokens.
      *     deadline: timestamp after which the transaction will revert.
      */
-    function swapExactETHForTokens(uint256 amountOutMin, address[] calldata path, address to, uint256 deadline)
-        external
-        payable
-        returns (uint256[] memory amounts);
+    function swapExactETHForTokens(
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external payable returns (uint256[] memory amounts);
 }

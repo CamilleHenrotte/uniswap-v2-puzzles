@@ -24,7 +24,7 @@ contract AddLiquidTest is Test {
     }
 
     function test_AddLiquidity() public {
-        (uint256 reserve0, uint256 reserve1,) = IUniswapV2Pair(pool).getReserves();
+        (uint256 reserve0, uint256 reserve1, ) = IUniswapV2Pair(pool).getReserves();
         uint256 _totalSupply = IUniswapV2Pair(pool).totalSupply();
 
         vm.prank(address(0xb0b));

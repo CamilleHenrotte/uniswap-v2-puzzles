@@ -20,5 +20,7 @@ contract BurnLiquid {
          *     to: recipient address to receive tokenA and tokenB.
          */
         // your code here
+        IERC20(pool).transfer(pool, IERC20(pool).balanceOf(address(this)));
+        IUniswapV2Pair(pool).burn(address(this));
     }
 }

